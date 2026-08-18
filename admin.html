@@ -65,7 +65,7 @@ tr.win{background:var(--yellow)}
 
 <div class="wrap" id="app">
   <h1>LINE EVENT — FREE GIFT CAMPAIGN</h1>
-  <div class="sub">응모 DB · 포인트 누적 · 자동 선정 · EXMATE 발송양식</div>
+  <div class="sub">응모 DB · 포인트 누적 · 캠페인 내역 · 자동 선정 · EXMATE 발송양식 — 설문 페이지: <a href="https://event.moiseskin.com" target="_blank">event.moiseskin.com</a></div>
 
   <div class="kpis">
     <div class="kpi"><div class="l">총 응모</div><div class="v" id="k1">—</div><div class="s" id="k1s"></div></div>
@@ -77,12 +77,14 @@ tr.win{background:var(--yellow)}
   <div class="tabs">
     <button class="tab on" id="tab-entries" onclick="showTab('entries')">응모 내역</button>
     <button class="tab" id="tab-points" onclick="showTab('points')">누적 포인트 (인별)</button>
+    <button class="tab" id="tab-camps" onclick="showTab('camps')">캠페인 내역</button>
   </div>
 
   <div class="card" id="pane-entries">
     <div class="toolbar">
       <input type="text" id="q" placeholder="이름 · LINE명 · 계정 · 이메일 검색" oninput="render()" style="min-width:220px">
       <select id="f-camp" onchange="render()"><option value="">전체 캠페인</option></select>
+      <select id="f-country" onchange="render()"><option value="">전체 국가</option></select>
       <div class="spacer"></div>
       <input type="number" id="draw-n" value="100" min="1" style="width:80px" title="선정 인원">
       <button class="btn-p" onclick="draw()">🎯 포인트별 자동 선정</button>
@@ -92,10 +94,18 @@ tr.win{background:var(--yellow)}
     </div>
     <div class="notice-strip" id="draw-info" style="display:none"></div>
     <div class="tblwrap"><table>
-      <thead><tr><th></th><th>일시</th><th>LINE명</th><th>이름</th><th>pt</th><th>액션</th><th>계정 (Qoo10/IG/X)</th><th>연락처</th><th>주소</th><th>유입</th><th>수신동의</th><th>캠페인</th></tr></thead>
+      <thead><tr><th></th><th>일시</th><th>LINE명</th><th>이름</th><th>pt</th><th>액션</th><th>계정 (Qoo10/IG/X)</th><th>연락처</th><th>주소</th><th>유입</th><th>수신동의</th><th>캠페인</th><th>국가</th></tr></thead>
       <tbody id="rows"></tbody>
     </table></div>
     <p class="small muted" id="count"></p>
+  </div>
+
+  <div class="card" id="pane-camps" style="display:none">
+    <p class="small muted" style="margin-bottom:10px">캠페인/이벤트별 응모 현황이에요. 새 캠페인(와디즈 등)은 설문 페이지의 campaign 값만 바꿔서 열면 자동으로 이 목록에 잡힙니다.</p>
+    <div class="tblwrap"><table style="min-width:800px">
+      <thead><tr><th>캠페인</th><th>국가</th><th>응모</th><th>평균 pt</th><th>기간</th><th>설문 페이지</th></tr></thead>
+      <tbody id="crow"></tbody>
+    </table></div>
   </div>
 
   <div class="card" id="pane-points" style="display:none">
@@ -137,12 +147,41 @@ async function login(){
   }
 }
 
+const CAMPAIGNS = {
+  freegift_2608: {label:'LINE FREE GIFT (성수재팬 시부야)', url:'https://event.moiseskin.com'}
+};
+
 function boot(){
-  // 캠페인 필터 옵션
+  // 캠페인/국가 필터 옵션
   const camps = [...new Set(DATA.map(r=>r.campaign||'freegift_2608'))];
   const sel = document.getElementById('f-camp');
-  camps.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
-  kpis(); render(); renderPoints();
+  camps.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=(CAMPAIGNS[c]?.label||c); sel.appendChild(o); });
+  const countries = [...new Set(DATA.map(r=>r.country||'JP'))];
+  const cs = document.getElementById('f-country');
+  countries.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; cs.appendChild(o); });
+  kpis(); render(); renderPoints(); renderCamps();
+}
+
+function renderCamps(){
+  const g = {};
+  DATA.forEach(r=>{
+    const k = r.campaign||'freegift_2608';
+    (g[k] = g[k]||[]).push(r);
+  });
+  document.getElementById('crow').innerHTML = Object.entries(g).map(([k,rows])=>{
+    const pts = rows.reduce((s,r)=>s+(r.total_points||0),0);
+    const dates = rows.map(r=>new Date(r.created_at)).sort((a,b)=>a-b);
+    const cty = [...new Set(rows.map(r=>r.country||'JP'))].join(', ');
+    const info = CAMPAIGNS[k];
+    return `<tr>
+      <td><b>${esc(info?.label||k)}</b><div class="small muted">${esc(k)}</div></td>
+      <td>${esc(cty)}</td>
+      <td>${rows.length}명</td>
+      <td class="pt">+${(pts/rows.length).toFixed(1)}</td>
+      <td class="small">${fd(dates[0])} ~ ${fd(dates[dates.length-1])}</td>
+      <td>${info?.url?`<a href="${esc(info.url)}" target="_blank">${esc(info.url.replace('https://',''))}</a>`:'—'}</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="6" class="muted">아직 응모 데이터가 없어요.</td></tr>';
 }
 
 function kpis(){
@@ -163,8 +202,10 @@ function kpis(){
 function filtered(){
   const q = document.getElementById('q').value.trim().toLowerCase();
   const c = document.getElementById('f-camp').value;
+  const ct = document.getElementById('f-country').value;
   return DATA.filter(r=>{
     if(c && (r.campaign||'freegift_2608')!==c) return false;
+    if(ct && (r.country||'JP')!==ct) return false;
     if(q){
       const hay=[r.full_name,r.furigana,r.line_display_name,r.instagram_id,r.x_id,r.qoo10_id,r.email,r.phone].join(' ').toLowerCase();
       if(!hay.includes(q)) return false;
@@ -193,6 +234,7 @@ function render(){
       <td class="small">${esc(r.visit_source||'—')}</td>
       <td>${r.marketing_agreed?'동의':'<span class="muted">—</span>'}</td>
       <td class="small muted">${esc(r.campaign||'')}</td>
+      <td class="small">${esc(r.country||'JP')}</td>
     </tr>`).join('');
   document.getElementById('count').textContent = `${rows.length}명 표시 / 전체 ${DATA.length}명`;
 }
@@ -206,10 +248,10 @@ function renderPoints(){
 }
 
 function showTab(t){
-  document.getElementById('pane-entries').style.display = t==='entries'?'block':'none';
-  document.getElementById('pane-points').style.display = t==='points'?'block':'none';
-  document.getElementById('tab-entries').classList.toggle('on', t==='entries');
-  document.getElementById('tab-points').classList.toggle('on', t==='points');
+  ['entries','points','camps'].forEach(x=>{
+    document.getElementById('pane-'+x).style.display = t===x?'block':'none';
+    document.getElementById('tab-'+x).classList.toggle('on', t===x);
+  });
 }
 
 /* 포인트별 자동 선정: 포인트 높은 순 우선, 동점은 무작위 */
@@ -238,14 +280,14 @@ const stamp = () => new Date().toISOString().slice(0,10).replace(/-/g,'');
 function dlExmate(winnersOnly){
   let rows = filtered();
   if(winnersOnly) rows = rows.filter(r=>WIN.has(r.id));
-  const head = ['수취인명','우편번호','주소','전화번호(HP)','이메일','LINE명','포인트'];
-  const data = [head, ...rows.map(r=>[r.full_name, r.postal_code, r.address, r.phone, r.email, r.line_display_name, r.total_points||0])];
+  const head = ['수취인명','우편번호','주소','전화번호(HP)','이메일','LINE명','포인트','국가','캠페인'];
+  const data = [head, ...rows.map(r=>[r.full_name, r.postal_code, r.address, r.phone, r.email, r.line_display_name, r.total_points||0, r.country||'JP', r.campaign||''])];
   sheet(data, 'EXMATE', `EXMATE발송양식_${winnersOnly?'선정자':'전체'}_${stamp()}.xlsx`);
 }
 function dlFull(){
-  const head = ['응모일시','캠페인','LINE명','이름','후리가나','우편번호','주소','전화','이메일','포인트','사진송신','Qoo10팔로우','Qoo10ID','IG팔로우','IG_ID','X팔로우','X_ID','게시','유입경로','마케팅동의','언어'];
+  const head = ['응모일시','캠페인','국가','LINE명','이름','후리가나','우편번호','주소','전화','이메일','포인트','LINE메시지','Qoo10팔로우','Qoo10ID','IG팔로우','IG_ID','X팔로우','X_ID','게시','유입경로','마케팅동의','언어'];
   const data = [head, ...filtered().map(r=>[
-    r.created_at, r.campaign||'', r.line_display_name, r.full_name, r.furigana||'', r.postal_code, r.address, r.phone, r.email,
+    r.created_at, r.campaign||'', r.country||'JP', r.line_display_name, r.full_name, r.furigana||'', r.postal_code, r.address, r.phone, r.email,
     r.total_points||0, r.did_photo_send?'Y':'', r.did_qoo10_follow?'Y':'', r.qoo10_id||'', r.did_instagram_follow?'Y':'', r.instagram_id||'',
     r.did_x_follow?'Y':'', r.x_id||'', r.did_hashtag_post?'Y':'', r.visit_source||'', r.marketing_agreed?'Y':'', r.lang||''
   ])];
