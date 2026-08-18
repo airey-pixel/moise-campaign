@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>MOISE Campaign Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{--pink:#ED5C97;--pink-deep:#D9437F;--pink-soft:#FBE9F1;--bg:#FAF2F5;--ink:#3B3236;--ink-soft:#8A7B81;--line:#F0DCE5;--yellow:#FBF3C6}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6}
+.wrap{max-width:1200px;margin:0 auto;padding:24px 20px 80px}
+h1{font-family:'Montserrat',sans-serif;font-size:18px;letter-spacing:.08em;color:var(--pink);margin-bottom:4px}
+.sub{font-size:12px;color:var(--ink-soft);margin-bottom:20px}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:16px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.kpi .l{font-size:11px;color:var(--ink-soft)}
+.kpi .v{font-size:22px;font-weight:700;color:var(--pink-deep)}
+.kpi .s{font-size:11px;color:var(--ink-soft)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+input[type=text],input[type=password],input[type=number],select{
+  border:1.5px solid var(--line);border-radius:10px;padding:9px 12px;font-size:13.5px;font-family:inherit;outline:none;background:#fff}
+input:focus,select:focus{border-color:var(--pink)}
+button{border:0;border-radius:999px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-p{background:var(--pink);color:#fff}
+.btn-g{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.btn-d{background:var(--ink);color:#fff}
+.spacer{flex:1}
+.tblwrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:1100px;font-size:12.5px}
+th{position:sticky;top:0;background:#fff;text-align:left;padding:8px 10px;border-bottom:2px solid var(--line);font-size:11.5px;color:var(--ink-soft);white-space:nowrap}
+td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+tr.win{background:var(--yellow)}
+.pt{font-weight:800;color:var(--pink-deep)}
+.chip{display:inline-block;font-size:10px;font-weight:700;border-radius:999px;padding:1px 7px;background:#F3EDE8;color:#9A8C80;margin-right:2px}
+.chip.on{background:var(--pink-soft);color:var(--pink-deep)}
+.muted{color:var(--ink-soft)}
+.small{font-size:11.5px}
+.tabs{display:flex;gap:6px;margin-bottom:14px}
+.tab{border:1.5px solid var(--line);background:#fff;color:var(--ink-soft);border-radius:999px;padding:7px 16px;font-size:12.5px;font-weight:700;cursor:pointer}
+.tab.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+#gate{max-width:340px;margin:16vh auto;text-align:center}
+#gate .card{padding:32px 26px}
+#gate input{width:100%;text-align:center;letter-spacing:.3em;font-size:18px;margin:14px 0}
+#gate .err{color:var(--pink-deep);font-size:12px;font-weight:700;display:none;margin-top:8px}
+.logo{height:22px;display:block;margin:0 auto 10px}
+#app{display:none}
+.notice-strip{background:var(--yellow);border-radius:12px;padding:10px 14px;font-size:12px;margin-bottom:14px;color:#6E6148}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="card">
+    <div style="font-family:'Montserrat',sans-serif;font-weight:700;letter-spacing:.2em;color:var(--pink);font-size:16px">MOISE ADMIN</div>
+    <p class="small muted" style="margin-top:6px">캠페인 응모 데이터 관리 페이지입니다.</p>
+    <input type="password" id="pw" inputmode="numeric" placeholder="비밀번호" onkeydown="if(event.key==='Enter')login()">
+    <button class="btn-p" style="width:100%" onclick="login()">들어가기</button>
+    <div class="err" id="gate-err">비밀번호가 올바르지 않아요.</div>
+  </div>
+</div>
+
+<div class="wrap" id="app">
+  <h1>LINE EVENT — FREE GIFT CAMPAIGN</h1>
+  <div class="sub">응모 DB · 포인트 누적 · 자동 선정 · EXMATE 발송양식</div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="l">총 응모</div><div class="v" id="k1">—</div><div class="s" id="k1s"></div></div>
+    <div class="kpi"><div class="l">평균 포인트</div><div class="v" id="k2">—</div><div class="s">당첨확률 UP 평균</div></div>
+    <div class="kpi"><div class="l">SNS 팔로우</div><div class="v" id="k3">—</div><div class="s" id="k3s"></div></div>
+    <div class="kpi"><div class="l">마케팅 수신동의</div><div class="v" id="k4">—</div><div class="s" id="k4s"></div></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on" id="tab-entries" onclick="showTab('entries')">응모 내역</button>
+    <button class="tab" id="tab-points" onclick="showTab('points')">누적 포인트 (인별)</button>
+  </div>
+
+  <div class="card" id="pane-entries">
+    <div class="toolbar">
+      <input type="text" id="q" placeholder="이름 · LINE명 · 계정 · 이메일 검색" oninput="render()" style="min-width:220px">
+      <select id="f-camp" onchange="render()"><option value="">전체 캠페인</option></select>
+      <div class="spacer"></div>
+      <input type="number" id="draw-n" value="100" min="1" style="width:80px" title="선정 인원">
+      <button class="btn-p" onclick="draw()">🎯 포인트별 자동 선정</button>
+      <button class="btn-d" id="btn-win" style="display:none" onclick="dlExmate(true)">⬇ 선정자 EXMATE 엑셀</button>
+      <button class="btn-g" onclick="dlExmate(false)">⬇ 전체 EXMATE 엑셀</button>
+      <button class="btn-g" onclick="dlFull()">⬇ 전체 데이터 엑셀</button>
+    </div>
+    <div class="notice-strip" id="draw-info" style="display:none"></div>
+    <div class="tblwrap"><table>
+      <thead><tr><th></th><th>일시</th><th>LINE명</th><th>이름</th><th>pt</th><th>액션</th><th>계정 (Qoo10/IG/X)</th><th>연락처</th><th>주소</th><th>유입</th><th>수신동의</th><th>캠페인</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table></div>
+    <p class="small muted" id="count"></p>
+  </div>
+
+  <div class="card" id="pane-points" style="display:none">
+    <p class="small muted" style="margin-bottom:10px">이메일 기준으로 모든 캠페인의 포인트를 합산한 누적 현황이에요. 다음 캠페인 응모도 같은 DB에 쌓이면서 자동 누적됩니다.</p>
+    <div class="tblwrap"><table style="min-width:700px">
+      <thead><tr><th>이메일</th><th>LINE명</th><th>이름</th><th>응모 횟수</th><th>누적 포인트</th><th>최근 응모</th></tr></thead>
+      <tbody id="prow"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<script>
+const URL_ = "https://agvtlghgtdpnuarovanf.supabase.co";
+const KEY = "sb_publishable_711XSHRrNzhOH_YatmObwg_un0bMhUk";
+let PW = '', DATA = [], POINTS = [], WIN = new Set();
+
+async function rpc(fn, pw){
+  const r = await fetch(`${URL_}/rest/v1/rpc/${fn}`, {
+    method:'POST',
+    headers:{'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY},
+    body: JSON.stringify({pw})
+  });
+  if(!r.ok) throw new Error('rpc failed');
+  return r.json();
+}
+
+async function login(){
+  const pw = document.getElementById('pw').value.trim();
+  try{
+    const ok = await rpc('line_event_check', pw);
+    if(ok !== true) throw new Error('wrong');
+    const [rows, pts] = await Promise.all([rpc('line_event_admin', pw), rpc('line_event_points', pw)]);
+    PW = pw; DATA = rows || []; POINTS = pts || [];
+    document.getElementById('gate').style.display='none';
+    document.getElementById('app').style.display='block';
+    boot();
+  }catch(e){
+    document.getElementById('gate-err').style.display='block';
+  }
+}
+
+function boot(){
+  // 캠페인 필터 옵션
+  const camps = [...new Set(DATA.map(r=>r.campaign||'freegift_2608'))];
+  const sel = document.getElementById('f-camp');
+  camps.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
+  kpis(); render(); renderPoints();
+}
+
+function kpis(){
+  const n = DATA.length;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const tn = DATA.filter(r=>new Date(r.created_at)>=today).length;
+  const avg = n ? (DATA.reduce((s,r)=>s+(r.total_points||0),0)/n).toFixed(1) : '0';
+  const ig = DATA.filter(r=>r.did_instagram_follow).length;
+  const x = DATA.filter(r=>r.did_x_follow).length;
+  const q = DATA.filter(r=>r.did_qoo10_follow).length;
+  const mkt = DATA.filter(r=>r.marketing_agreed).length;
+  k1.textContent = n+'명'; k1s.textContent = '오늘 +'+tn;
+  k2.textContent = '+'+avg+'pt';
+  k3.textContent = (ig+x+q)+'건'; k3s.textContent = `IG ${ig} · X ${x} · Qoo10 ${q}`;
+  k4.textContent = mkt+'명'; k4s.textContent = n? Math.round(mkt/n*100)+'%':'—';
+}
+
+function filtered(){
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  const c = document.getElementById('f-camp').value;
+  return DATA.filter(r=>{
+    if(c && (r.campaign||'freegift_2608')!==c) return false;
+    if(q){
+      const hay=[r.full_name,r.furigana,r.line_display_name,r.instagram_id,r.x_id,r.qoo10_id,r.email,r.phone].join(' ').toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+const esc = s => (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fd = iso => { const d=new Date(iso); return `${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; };
+const chip=(on,l)=>`<span class="chip ${on?'on':''}">${l}</span>`;
+
+function render(){
+  const rows = filtered();
+  document.getElementById('rows').innerHTML = rows.map(r=>`
+    <tr class="${WIN.has(r.id)?'win':''}">
+      <td>${WIN.has(r.id)?'🏆':''}</td>
+      <td class="small">${fd(r.created_at)}</td>
+      <td><b>${esc(r.line_display_name)}</b></td>
+      <td>${esc(r.full_name)}${r.furigana?`<div class="small muted">${esc(r.furigana)}</div>`:''}</td>
+      <td class="pt">+${r.total_points||0}</td>
+      <td>${chip(r.did_photo_send,'📷2')}${chip(r.did_qoo10_follow,'Q2')}${chip(r.did_instagram_follow,'IG1')}${chip(r.did_x_follow,'X1')}${chip(r.did_hashtag_post,'#2')}</td>
+      <td class="small">${esc(r.qoo10_id||'—')} / ${esc(r.instagram_id||'—')} / ${esc(r.x_id||'—')}</td>
+      <td class="small">${esc(r.phone)}<div class="muted">${esc(r.email)}</div></td>
+      <td class="small">〒${esc(r.postal_code)} ${esc(r.address)}</td>
+      <td class="small">${esc(r.visit_source||'—')}</td>
+      <td>${r.marketing_agreed?'동의':'<span class="muted">—</span>'}</td>
+      <td class="small muted">${esc(r.campaign||'')}</td>
+    </tr>`).join('');
+  document.getElementById('count').textContent = `${rows.length}명 표시 / 전체 ${DATA.length}명`;
+}
+
+function renderPoints(){
+  document.getElementById('prow').innerHTML = POINTS.map(p=>`
+    <tr>
+      <td>${esc(p.email)}</td><td>${esc(p.line_display_name)}</td><td>${esc(p.full_name)}</td>
+      <td>${p.entries}회</td><td class="pt">+${p.total_points}</td><td class="small">${fd(p.last_entry)}</td>
+    </tr>`).join('');
+}
+
+function showTab(t){
+  document.getElementById('pane-entries').style.display = t==='entries'?'block':'none';
+  document.getElementById('pane-points').style.display = t==='points'?'block':'none';
+  document.getElementById('tab-entries').classList.toggle('on', t==='entries');
+  document.getElementById('tab-points').classList.toggle('on', t==='points');
+}
+
+/* 포인트별 자동 선정: 포인트 높은 순 우선, 동점은 무작위 */
+function draw(){
+  const n = Math.max(1, parseInt(document.getElementById('draw-n').value)||100);
+  const rows = [...filtered()];
+  // 포인트 내림차순 정렬, 동점 그룹 내 무작위 셔플
+  rows.sort((a,b)=>(b.total_points||0)-(a.total_points||0) || Math.random()-0.5);
+  WIN = new Set(rows.slice(0,n).map(r=>r.id));
+  const cut = rows[Math.min(n,rows.length)-1];
+  document.getElementById('btn-win').style.display='inline-block';
+  const info = document.getElementById('draw-info');
+  info.style.display='block';
+  info.textContent = `🎯 ${WIN.size}명 선정 완료 (포인트 높은 순, 동점자는 무작위). 커트라인: +${cut? (cut.total_points||0):0}pt. 다시 누르면 동점자 추첨이 새로 돌아갑니다.`;
+  render();
+}
+
+/* EXMATE 발송양식 엑셀 */
+function sheet(rows, name, fname){
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, name);
+  XLSX.writeFile(wb, fname);
+}
+const stamp = () => new Date().toISOString().slice(0,10).replace(/-/g,'');
+function dlExmate(winnersOnly){
+  let rows = filtered();
+  if(winnersOnly) rows = rows.filter(r=>WIN.has(r.id));
+  const head = ['수취인명','우편번호','주소','전화번호(HP)','이메일','LINE명','포인트'];
+  const data = [head, ...rows.map(r=>[r.full_name, r.postal_code, r.address, r.phone, r.email, r.line_display_name, r.total_points||0])];
+  sheet(data, 'EXMATE', `EXMATE발송양식_${winnersOnly?'선정자':'전체'}_${stamp()}.xlsx`);
+}
+function dlFull(){
+  const head = ['응모일시','캠페인','LINE명','이름','후리가나','우편번호','주소','전화','이메일','포인트','사진송신','Qoo10팔로우','Qoo10ID','IG팔로우','IG_ID','X팔로우','X_ID','게시','유입경로','마케팅동의','언어'];
+  const data = [head, ...filtered().map(r=>[
+    r.created_at, r.campaign||'', r.line_display_name, r.full_name, r.furigana||'', r.postal_code, r.address, r.phone, r.email,
+    r.total_points||0, r.did_photo_send?'Y':'', r.did_qoo10_follow?'Y':'', r.qoo10_id||'', r.did_instagram_follow?'Y':'', r.instagram_id||'',
+    r.did_x_follow?'Y':'', r.x_id||'', r.did_hashtag_post?'Y':'', r.visit_source||'', r.marketing_agreed?'Y':'', r.lang||''
+  ])];
+  sheet(data, '응모데이터', `라인이벤트_전체데이터_${stamp()}.xlsx`);
+}
+</script>
+</body>
+</html>
