@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>MOISĒ | FREE GIFT CAMPAIGN 応募フォーム</title>
+<meta name="description" content="MOISĒ FREE GIFT CAMPAIGN — 100名様に現品プレゼント 応募フォーム">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Zen+Maru+Gothic:wght@500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pink:#ED5C97;          /* accent */
+  --pink-deep:#D9437F;
+  --pink-soft:#FBE9F1;
+  --pink-bg:#FAF2F5;       /* page bg */
+  --cream:#FFFDF9;
+  --ink:#3B3236;
+  --ink-soft:#8A7B81;
+  --line:#F0DCE5;
+  --yellow:#FBF3C6;        /* highlight like the flyer */
+  --ok:#2FA97C;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Noto Sans JP','Noto Sans KR',sans-serif;
+  background:var(--pink-bg);
+  color:var(--ink);
+  line-height:1.7;
+  font-size:15px;
+}
+body[data-lang="ko"]{font-family:'Noto Sans KR','Noto Sans JP',sans-serif}
+.jp,.ko{display:none}
+body[data-lang="ja"] .jp{display:inline}
+body[data-lang="ko"] .ko{display:inline}
+body[data-lang="ja"] .jp.block, body[data-lang="ko"] .ko.block{display:block}
+
+.wrap{max-width:520px;margin:0 auto;padding:0 20px 80px}
+
+/* ── header ── */
+header{padding:26px 0 6px;text-align:center;position:relative}
+.lang-toggle{
+  position:absolute;top:22px;right:0;
+  display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:#fff;
+}
+.lang-toggle button{
+  border:0;background:transparent;padding:5px 12px;font-size:11px;letter-spacing:.06em;
+  color:var(--ink-soft);cursor:pointer;font-family:'Montserrat',sans-serif;font-weight:600;
+}
+.lang-toggle button.on{background:var(--ink);color:#fff}
+.brand{
+  font-family:'Montserrat',sans-serif;font-weight:700;font-size:26px;letter-spacing:.32em;
+  padding-left:.32em; /* optical centering */
+}
+.brand span{font-weight:400}
+.tagline{
+  font-family:'Montserrat',sans-serif;font-size:9.5px;letter-spacing:.34em;color:var(--ink-soft);
+  margin-top:2px;padding-left:.34em;
+}
+
+/* ── hero ── */
+.hero{
+  margin-top:22px;background:#fff;border:1px solid var(--line);border-radius:22px;
+  padding:30px 24px 26px;text-align:center;position:relative;overflow:hidden;
+}
+.hero::before,.hero::after{
+  content:"";position:absolute;width:120px;height:120px;border-radius:50%;
+  background:radial-gradient(circle,var(--pink-soft) 0%,transparent 70%);
+}
+.hero::before{top:-40px;left:-40px}
+.hero::after{bottom:-40px;right:-40px}
+.hero .slash{
+  font-family:'Zen Maru Gothic','Noto Sans KR',sans-serif;font-weight:700;color:var(--pink);
+  font-size:16.5px;letter-spacing:.05em;position:relative;
+}
+.hero h1{
+  font-family:'Montserrat',sans-serif;font-weight:700;font-size:21px;letter-spacing:.14em;
+  color:var(--pink);margin:2px 0 12px;position:relative;
+}
+.hero p{font-size:12.5px;color:var(--ink-soft);position:relative}
+.hero .badge100{
+  display:inline-block;margin-top:14px;background:var(--yellow);border-radius:999px;
+  padding:7px 18px;font-weight:700;font-size:13px;position:relative;
+}
+
+/* ── points bar ── */
+.ptbar{
+  position:sticky;top:10px;z-index:50;margin:18px 0 6px;
+  background:var(--ink);color:#fff;border-radius:999px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 20px;box-shadow:0 8px 24px rgba(59,50,54,.18);
+}
+.ptbar .lbl{font-size:11.5px;letter-spacing:.05em;opacity:.85}
+.ptbar .val{font-family:'Montserrat',sans-serif;font-weight:700;font-size:18px;color:#FFC7DE}
+.ptbar .val small{font-size:11px;font-weight:600;margin-left:2px}
+
+/* ── sections ── */
+section{background:#fff;border:1px solid var(--line);border-radius:22px;padding:26px 22px;margin-top:16px}
+.step{
+  display:flex;align-items:center;gap:10px;margin-bottom:4px;
+}
+.step .num{
+  font-family:'Montserrat',sans-serif;font-weight:700;font-size:11px;color:#fff;
+  background:var(--pink);border-radius:999px;padding:3px 12px;letter-spacing:.12em;
+}
+.step h2{font-size:16px;font-weight:700;letter-spacing:.02em}
+.step-sub{font-size:12px;color:var(--ink-soft);margin-bottom:16px}
+
+label.fl{display:block;font-size:12.5px;font-weight:700;margin:16px 0 6px}
+label.fl .req{color:var(--pink);font-size:10.5px;font-weight:700;margin-left:6px;vertical-align:1px}
+label.fl .opt{color:var(--ink-soft);font-size:10.5px;font-weight:500;margin-left:6px;vertical-align:1px}
+input[type=text],input[type=tel],input[type=email],select,textarea{
+  width:100%;border:1.5px solid var(--line);border-radius:12px;background:var(--cream);
+  padding:12px 14px;font-size:15px;font-family:inherit;color:var(--ink);outline:none;
+  transition:border-color .15s;
+  -webkit-appearance:none;appearance:none;
+}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238A7B81' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+input:focus,select:focus,textarea:focus{border-color:var(--pink)}
+input::placeholder,textarea::placeholder{color:#C5B4BB}
+textarea{min-height:88px;resize:vertical}
+.hint{font-size:11px;color:var(--ink-soft);margin-top:5px}
+.row2{display:flex;gap:10px}
+.row2>div{flex:1}
+.zipbtn{
+  flex:0 0 auto;border:0;background:var(--ink);color:#fff;border-radius:12px;
+  padding:0 16px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;
+}
+
+/* ── action cards ── */
+.action{
+  border:1.5px solid var(--line);border-radius:16px;padding:14px 16px;margin-top:10px;
+  cursor:pointer;transition:border-color .15s, background .15s;background:#fff;
+}
+.action.checked{border-color:var(--pink);background:var(--pink-soft)}
+.action .top{display:flex;align-items:center;gap:11px}
+.action .cb{
+  flex:0 0 22px;height:22px;border:2px solid var(--line);border-radius:7px;background:#fff;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;
+}
+.action.checked .cb{background:var(--pink);border-color:var(--pink)}
+.action .cb svg{opacity:0;transform:scale(.5);transition:all .15s}
+.action.checked .cb svg{opacity:1;transform:scale(1)}
+.action .ttl{font-size:13.5px;font-weight:700;flex:1;line-height:1.45}
+.action .pt{
+  font-family:'Montserrat',sans-serif;font-weight:700;font-size:11.5px;color:var(--pink);
+  background:var(--yellow);border-radius:999px;padding:3px 10px;white-space:nowrap;
+}
+.action .detail{display:none;margin-top:11px;padding-left:33px}
+.action.checked .detail{display:block}
+.action .detail input{background:#fff}
+.action .note{font-size:11px;color:var(--ink-soft);margin-top:5px;padding-left:0}
+.acct-link{color:var(--pink);font-weight:700;text-decoration:none}
+
+/* ── consent ── */
+.consent{border:1.5px solid var(--line);border-radius:16px;padding:14px 16px;margin-top:10px;cursor:pointer;display:flex;gap:11px;align-items:flex-start}
+.consent .cb{flex:0 0 22px;height:22px;border:2px solid var(--line);border-radius:7px;background:#fff;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .15s}
+.consent.checked .cb{background:var(--pink);border-color:var(--pink)}
+.consent .cb svg{opacity:0;transform:scale(.5);transition:all .15s}
+.consent.checked .cb svg{opacity:1;transform:scale(1)}
+.consent .txt{font-size:12px;line-height:1.65}
+.privacy-box{
+  background:var(--cream);border:1px solid var(--line);border-radius:12px;
+  padding:13px 15px;font-size:11px;color:var(--ink-soft);line-height:1.8;margin-top:14px;
+}
+.privacy-box b{color:var(--ink)}
+
+/* ── submit ── */
+.submit{
+  width:100%;border:0;margin-top:22px;border-radius:999px;padding:17px;
+  background:linear-gradient(135deg,var(--pink) 0%,var(--pink-deep) 100%);
+  color:#fff;font-size:16px;font-weight:700;letter-spacing:.08em;cursor:pointer;
+  font-family:inherit;box-shadow:0 10px 26px rgba(237,92,151,.35);
+  transition:transform .12s, box-shadow .12s;
+}
+.submit:active{transform:scale(.98)}
+.submit:disabled{opacity:.55;box-shadow:none;cursor:default}
+.errmsg{display:none;margin-top:12px;text-align:center;color:var(--pink-deep);font-size:12.5px;font-weight:700}
+
+/* ── thanks ── */
+#thanks{display:none;text-align:center;padding:60px 0 40px}
+#thanks .heart{font-size:42px}
+#thanks h2{font-family:'Zen Maru Gothic','Noto Sans KR',sans-serif;font-size:20px;color:var(--pink);margin:12px 0 10px;font-weight:700}
+#thanks p{font-size:13px;color:var(--ink-soft)}
+#thanks .ptdone{
+  display:inline-block;margin-top:18px;background:var(--yellow);border-radius:999px;
+  padding:9px 22px;font-weight:700;font-size:14px;
+}
+footer{text-align:center;margin-top:36px;font-family:'Montserrat',sans-serif;font-size:9px;letter-spacing:.3em;color:#C9B7BF}
+.err{border-color:var(--pink-deep) !important}
+</style>
+</head>
+<body data-lang="ja">
+<div class="wrap">
+
+<header>
+  <div class="lang-toggle">
+    <button type="button" id="btn-ja" class="on" onclick="setLang('ja')">日本語</button>
+    <button type="button" id="btn-ko" onclick="setLang('ko')">한국어</button>
+  </div>
+  <div class="brand">MOIS<span>Ē</span></div>
+  <div class="tagline">BE YOUR OWN FAVORITE</div>
+</header>
+
+<div id="form-area">
+
+<div class="hero">
+  <div class="slash">
+    <span class="jp">＼ 100名様に現品プレゼント ／</span>
+    <span class="ko">＼ 100분께 정품 증정 ／</span>
+  </div>
+  <h1>FREE GIFT CAMPAIGN</h1>
+  <p>
+    <span class="jp block">ご応募ありがとうございます。<br>賞品の発送とご連絡のため、下記のご入力をお願いいたします。</span>
+    <span class="ko block">응모해주셔서 감사합니다.<br>경품 발송과 연락을 위해 아래 내용을 입력해 주세요.</span>
+  </p>
+  <div class="badge100">
+    <span class="jp">抽選で100名様 🎀 当選のご連絡はLINEにて</span>
+    <span class="ko">추첨 100명 🎀 당첨 연락은 LINE으로 드려요</span>
+  </div>
+</div>
+
+<div class="ptbar">
+  <div class="lbl">
+    <span class="jp">現在の当選確率アップ</span>
+    <span class="ko">현재 당첨확률 UP</span>
+  </div>
+  <div class="val">+<span id="pt-total">0</span><small>point</small></div>
+</div>
+
+<form id="survey" novalidate>
+
+<!-- STEP 1 : LINE -->
+<section>
+  <div class="step"><span class="num">STEP 1</span>
+    <h2><span class="jp">LINEのお名前</span><span class="ko">LINE 정보</span></h2>
+  </div>
+  <p class="step-sub">
+    <span class="jp block">当選のご連絡はLINEでお送りします。</span>
+    <span class="ko block">당첨 연락은 LINE으로 드립니다.</span>
+  </p>
+  <label class="fl" for="line_name">
+    <span class="jp">LINEの表示名</span><span class="ko">LINE 표시 이름</span><span class="req">必須</span>
+  </label>
+  <input type="text" id="line_name" autocomplete="nickname" placeholder="">
+  <div class="hint">
+    <span class="jp">友だち追加されたアカウントの表示名をご記入ください。</span>
+    <span class="ko">친구추가하신 계정의 표시 이름을 적어주세요.</span>
+  </div>
+
+</section>
+
+<!-- STEP 2 : 당첨확률 UP -->
+<section>
+  <div class="step"><span class="num">STEP 2</span>
+    <h2><span class="jp">当選確率アップ 🎀</span><span class="ko">당첨확률 UP 🎀</span></h2>
+  </div>
+  <p class="step-sub">
+    <span class="jp block">参加した項目にチェックしてください（お好きなだけ）。フォローはアカウント名で確認いたします。</span>
+    <span class="ko block">참여하신 항목에 체크해 주세요 (원하는 만큼). 팔로우는 계정명으로 확인합니다.</span>
+  </p>
+
+  <div class="action" data-pt="2" data-key="photo">
+    <div class="top">
+      <div class="cb"><svg width="12" height="10" viewBox="0 0 12 10"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="ttl"><span class="jp">いちばん欲しい商品の写真をLINEで送った</span><span class="ko">가장 갖고 싶은 제품 사진을 LINE으로 보냈어요</span></div>
+      <div class="pt">+2pt</div>
+    </div>
+  </div>
+
+  <div class="action" data-pt="2" data-key="qoo10">
+    <div class="top">
+      <div class="cb"><svg width="12" height="10" viewBox="0 0 12 10"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="ttl"><span class="jp">Qoo10ショップをフォローした</span><span class="ko">Qoo10 샵을 팔로우했어요</span></div>
+      <div class="pt">+2pt</div>
+    </div>
+    <div class="detail">
+      <input type="text" id="qoo10_id" placeholder="Qoo10 ID">
+      <div class="note"><span class="jp">フォロー確認のため、Qoo10のIDをご記入ください。</span><span class="ko">팔로우 확인을 위해 Qoo10 ID를 적어주세요.</span></div>
+    </div>
+  </div>
+
+  <div class="action" data-pt="1" data-key="instagram">
+    <div class="top">
+      <div class="cb"><svg width="12" height="10" viewBox="0 0 12 10"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="ttl"><span class="jp">Instagram（<a class="acct-link" href="https://www.instagram.com/moisebeautyjp" target="_blank" onclick="event.stopPropagation()">@moisebeautyjp</a>）をフォローした</span><span class="ko">Instagram(<a class="acct-link" href="https://www.instagram.com/moisebeautyjp" target="_blank" onclick="event.stopPropagation()">@moisebeautyjp</a>)을 팔로우했어요</span></div>
+      <div class="pt">+1pt</div>
+    </div>
+    <div class="detail">
+      <input type="text" id="instagram_id" placeholder="@your_account">
+      <div class="note"><span class="jp">フォロー確認のため、ご自身のアカウント名をご記入ください。</span><span class="ko">팔로우 확인을 위해 본인 계정명을 적어주세요.</span></div>
+    </div>
+  </div>
+
+  <div class="action" data-pt="1" data-key="x">
+    <div class="top">
+      <div class="cb"><svg width="12" height="10" viewBox="0 0 12 10"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="ttl"><span class="jp">X（<a class="acct-link" href="https://x.com/moisebeautyjp" target="_blank" onclick="event.stopPropagation()">@moisebeautyjp</a>）をフォローした</span><span class="ko">X(<a class="acct-link" href="https://x.com/moisebeautyjp" target="_blank" onclick="event.stopPropagation()">@moisebeautyjp</a>)를 팔로우했어요</span></div>
+      <div class="pt">+1pt</div>
+    </div>
+    <div class="detail">
+      <input type="text" id="x_id" placeholder="@your_account">
+      <div class="note"><span class="jp">フォロー確認のため、ご自身のアカウント名をご記入ください。</span><span class="ko">팔로우 확인을 위해 본인 계정명을 적어주세요.</span></div>
+    </div>
+  </div>
+
+  <div class="action" data-pt="2" data-key="post">
+    <div class="top">
+      <div class="cb"><svg width="12" height="10" viewBox="0 0 12 10"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="ttl"><span class="jp">写真を投稿した（#モアゼ）</span><span class="ko">사진을 게시했어요 (#モアゼ)</span></div>
+      <div class="pt">+2pt</div>
+    </div>
+    <div class="detail">
+      <input type="text" id="post_url" placeholder="https:// URL / @account" inputmode="url">
+      <div class="note"><span class="jp">投稿のURL、またはアカウント名をご記入ください（公開アカウントでお願いします）。</span><span class="ko">게시물 URL 또는 계정명을 적어주세요 (공개 계정으로 부탁드려요).</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- STEP 3 : 배송정보 -->
+<section>
+  <div class="step"><span class="num">STEP 3</span>
+    <h2><span class="jp">賞品のお届け先</span><span class="ko">경품 배송지</span></h2>
+  </div>
+  <p class="step-sub">
+    <span class="jp block">ご入力いただいた情報は、賞品の発送および当選のご連絡にのみ使用いたします。</span>
+    <span class="ko block">입력하신 정보는 경품 발송과 당첨 연락에만 사용됩니다.</span>
+  </p>
+
+  <label class="fl" for="full_name"><span class="jp">お名前</span><span class="ko">이름</span><span class="req">必須</span></label>
+  <input type="text" id="full_name" autocomplete="name" placeholder="">
+
+  <label class="fl" for="furigana"><span class="jp">フリガナ</span><span class="ko">후리가나</span><span class="opt">任意</span></label>
+  <input type="text" id="furigana" placeholder="">
+
+  <label class="fl" for="postal_code"><span class="jp">郵便番号</span><span class="ko">우편번호</span><span class="req">必須</span></label>
+  <div class="row2">
+    <div><input type="text" id="postal_code" inputmode="numeric" autocomplete="postal-code" maxlength="8" placeholder="123-4567"></div>
+    <button type="button" class="zipbtn" onclick="lookupZip()"><span class="jp">住所検索</span><span class="ko">주소검색</span></button>
+  </div>
+
+  <label class="fl" for="address"><span class="jp">ご住所</span><span class="ko">주소</span><span class="req">必須</span></label>
+  <input type="text" id="address" autocomplete="street-address" placeholder="">
+  <div class="hint"><span class="jp">建物名・お部屋番号までご記入ください。</span><span class="ko">건물명·호수까지 적어주세요.</span></div>
+
+  <label class="fl" for="phone"><span class="jp">お電話番号</span><span class="ko">전화번호</span><span class="req">必須</span></label>
+  <input type="tel" id="phone" inputmode="tel" autocomplete="tel" placeholder="090-1234-5678">
+  <div class="hint"><span class="jp">配送時のご連絡にのみ使用いたします。</span><span class="ko">배송 시 연락 용도로만 사용됩니다.</span></div>
+
+  <label class="fl" for="email"><span class="jp">メールアドレス</span><span class="ko">이메일</span><span class="req">必須</span></label>
+  <input type="email" id="email" inputmode="email" autocomplete="email" placeholder="example@email.com">
+</section>
+
+<!-- STEP 4 : ひとこと -->
+<section>
+  <div class="step"><span class="num">STEP 4</span>
+    <h2><span class="jp">ひとことアンケート</span><span class="ko">한 줄 설문</span></h2>
+  </div>
+
+  <label class="fl" for="visit_source"><span class="jp">MOISĒを知ったきっかけ</span><span class="ko">MOISĒ를 알게 된 계기</span><span class="opt">任意</span></label>
+  <select id="visit_source">
+    <option value="" selected></option>
+    <option value="popup"><!--jp-->ポップアップ（SEONGSU JAPAN）</option>
+    <option value="instagram">Instagram</option>
+    <option value="x">X</option>
+    <option value="tiktok">TikTok</option>
+    <option value="qoo10">Qoo10</option>
+    <option value="friend"><!--jp-->友人・知人</option>
+    <option value="other"><!--jp-->その他</option>
+  </select>
+
+  <label class="fl" for="feedback"><span class="jp">MOISĒへのメッセージ・ご感想</span><span class="ko">MOISĒ에게 한마디·감상</span><span class="opt">任意</span></label>
+  <textarea id="feedback" placeholder=""></textarea>
+</section>
+
+<!-- 동의 -->
+<section>
+  <div class="consent" id="privacy_agree">
+    <div class="cb"><svg width="12" height="10" viewBox="0 0 12 10"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="txt">
+      <span class="jp block"><b>個人情報の取り扱いに同意します。</b>（必須）</span>
+      <span class="ko block"><b>개인정보 취급에 동의합니다.</b> (필수)</span>
+    </div>
+  </div>
+  <div class="consent" id="marketing_agree">
+    <div class="cb"><svg width="12" height="10" viewBox="0 0 12 10"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="txt">
+      <span class="jp block">MOISĒの新商品・キャンペーン情報の受け取りを希望します。（任意）</span>
+      <span class="ko block">MOISĒ의 신제품·캠페인 소식 수신을 희망합니다. (선택)</span>
+    </div>
+  </div>
+
+  <div class="privacy-box">
+    <span class="jp block"><b>個人情報の取り扱いについて</b><br>
+    ご入力いただいた個人情報は、MoodLabs Co., Ltd.（MOISĒ）が本キャンペーンの賞品発送・当選のご連絡・フォロー確認のためにのみ使用し、配送業務の委託先を除く第三者に提供することはありません。目的達成後は適切に破棄いたします。</span>
+    <span class="ko block"><b>개인정보 취급 안내</b><br>
+    입력하신 개인정보는 MoodLabs Co., Ltd.(MOISĒ)가 본 캠페인의 경품 발송·당첨 연락·팔로우 확인 목적으로만 사용하며, 배송 위탁사를 제외한 제3자에게 제공하지 않습니다. 목적 달성 후 적절히 파기합니다.</span>
+  </div>
+
+  <button type="submit" class="submit" id="submit-btn">
+    <span class="jp">応募を完了する 🎀</span>
+    <span class="ko">응모 완료하기 🎀</span>
+  </button>
+  <div class="errmsg" id="errmsg">
+    <span class="jp">未入力の必須項目があります。ご確認ください。</span>
+    <span class="ko">입력하지 않은 필수 항목이 있어요. 확인해 주세요.</span>
+  </div>
+</section>
+
+</form>
+</div><!-- /form-area -->
+
+<div id="thanks">
+  <div class="heart">🎀</div>
+  <h2>
+    <span class="jp">ご応募ありがとうございました！</span>
+    <span class="ko">응모해주셔서 감사합니다!</span>
+  </h2>
+  <p>
+    <span class="jp block">当選のご連絡はLINEにてお送りいたします。<br>お楽しみにお待ちください。</span>
+    <span class="ko block">당첨 연락은 LINE으로 드릴게요.<br>기대하며 기다려 주세요.</span>
+  </p>
+  <div class="ptdone">
+    <span class="jp">当選確率アップ：</span><span class="ko">당첨확률 UP: </span>+<span id="pt-final">0</span>point
+  </div>
+</div>
+
+<footer>MOISĒ · BE YOUR OWN FAVORITE</footer>
+</div>
+
+<script>
+const SUPABASE_URL = "https://agvtlghgtdpnuarovanf.supabase.co";
+const SUPABASE_KEY = "sb_publishable_711XSHRrNzhOH_YatmObwg_un0bMhUk";
+
+/* ── language ── */
+function setLang(l){
+  document.body.dataset.lang = l;
+  document.getElementById('btn-ja').classList.toggle('on', l==='ja');
+  document.getElementById('btn-ko').classList.toggle('on', l==='ko');
+  document.documentElement.lang = l;
+  // option labels
+  const vs = document.getElementById('visit_source');
+  const optLabels = {
+    ja:{popup:'ポップアップ（SEONGSU JAPAN）',instagram:'Instagram',x:'X',tiktok:'TikTok',qoo10:'Qoo10',friend:'友人・知人',other:'その他'},
+    ko:{popup:'팝업스토어 (SEONGSU JAPAN)',instagram:'Instagram',x:'X',tiktok:'TikTok',qoo10:'Qoo10',friend:'지인 추천',other:'기타'}
+  };
+  [...vs.options].forEach(o=>{ if(o.value) o.textContent = optLabels[l][o.value]; });
+}
+
+/* ── action cards & points ── */
+const BASE = {photo:false,qoo10:false,instagram:false,x:false,post:false};
+document.querySelectorAll('.action').forEach(card=>{
+  card.addEventListener('click', e=>{
+    if(e.target.closest('input') || e.target.closest('a')) return;
+    card.classList.toggle('checked');
+    BASE[card.dataset.key] = card.classList.contains('checked');
+    updatePoints();
+  });
+});
+function updatePoints(){
+  let t = 0;
+  document.querySelectorAll('.action.checked').forEach(c=> t += parseInt(c.dataset.pt));
+  document.getElementById('pt-total').textContent = t;
+  return t;
+}
+
+/* ── consents ── */
+['privacy_agree','marketing_agree'].forEach(id=>{
+  document.getElementById(id).addEventListener('click', function(){ this.classList.toggle('checked'); });
+});
+
+/* ── zip lookup (zipcloud, JP only) ── */
+async function lookupZip(){
+  const z = document.getElementById('postal_code').value.replace(/[^0-9]/g,'');
+  if(z.length !== 7) return;
+  try{
+    const r = await fetch('https://zipcloud.ibsnet.co.jp/api/search?zipcode='+z);
+    const d = await r.json();
+    if(d.results && d.results[0]){
+      const a = d.results[0];
+      const cur = document.getElementById('address');
+      cur.value = a.address1 + a.address2 + a.address3;
+      cur.focus();
+    }
+  }catch(e){}
+}
+document.getElementById('postal_code').addEventListener('blur', lookupZip);
+
+/* ── validation & submit ── */
+function need(id){
+  const el = document.getElementById(id);
+  const ok = el.value.trim() !== '';
+  el.classList.toggle('err', !ok);
+  return ok;
+}
+document.getElementById('survey').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const errEl = document.getElementById('errmsg');
+  let ok = true;
+  ['line_name','full_name','postal_code','address','phone','email'].forEach(id=>{ if(!need(id)) ok=false; });
+  const email = document.getElementById('email');
+  if(email.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)){ email.classList.add('err'); ok=false; }
+  const priv = document.getElementById('privacy_agree').classList.contains('checked');
+  if(!priv) ok = false;
+  if(!ok){
+    errEl.style.display='block';
+    const firstErr = document.querySelector('.err') || document.getElementById('privacy_agree');
+    firstErr.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  errEl.style.display='none';
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  const total = updatePoints();
+  const v = id => document.getElementById(id).value.trim() || null;
+
+  const payload = {
+    line_display_name: v('line_name'),
+    full_name: v('full_name'),
+    furigana: v('furigana'),
+    postal_code: v('postal_code'),
+    address: v('address'),
+    phone: v('phone'),
+    email: v('email'),
+    did_photo_send: BASE.photo,
+    did_qoo10_follow: BASE.qoo10,
+    qoo10_id: v('qoo10_id'),
+    did_instagram_follow: BASE.instagram,
+    instagram_id: v('instagram_id'),
+    did_x_follow: BASE.x,
+    x_id: v('x_id'),
+    did_hashtag_post: BASE.post,
+    post_url: v('post_url'),
+    total_points: total,
+    visit_source: v('visit_source'),
+    feedback: v('feedback'),
+    privacy_agreed: true,
+    marketing_agreed: document.getElementById('marketing_agree').classList.contains('checked'),
+    lang: document.body.dataset.lang,
+    user_agent: navigator.userAgent.slice(0,255)
+  };
+
+  try{
+    const r = await fetch(SUPABASE_URL + '/rest/v1/line_event_survey', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization':'Bearer ' + SUPABASE_KEY,
+        'Prefer':'return=minimal'
+      },
+      body: JSON.stringify(payload)
+    });
+    if(!r.ok) throw new Error('submit failed');
+    document.getElementById('pt-final').textContent = total;
+    document.getElementById('form-area').style.display='none';
+    document.getElementById('thanks').style.display='block';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }catch(err){
+    btn.disabled = false;
+    errEl.style.display='block';
+    errEl.innerHTML = document.body.dataset.lang==='ja'
+      ? '送信に失敗しました。通信環境をご確認のうえ、もう一度お試しください。'
+      : '전송에 실패했어요. 네트워크 확인 후 다시 시도해 주세요.';
+  }
+});
+</script>
+</body>
+</html>
