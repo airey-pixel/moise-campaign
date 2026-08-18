@@ -150,6 +150,10 @@ textarea{min-height:88px;resize:vertical}
 .action .detail input{background:#fff}
 .action .note{font-size:11px;color:var(--ink-soft);margin-top:5px;padding-left:0}
 .acct-link{color:var(--pink);font-weight:700;text-decoration:none}
+.notice{
+  margin-top:14px;background:var(--yellow);border-radius:14px;padding:13px 16px;
+  font-size:11.5px;line-height:1.75;color:#6E6148;
+}
 
 /* ── consent ── */
 .consent{border:1.5px solid var(--line);border-radius:16px;padding:14px 16px;margin-top:10px;cursor:pointer;display:flex;gap:11px;align-items:flex-start}
@@ -306,13 +310,14 @@ footer{text-align:center;margin-top:36px;font-family:'Montserrat',sans-serif;fon
   <div class="action" data-pt="2" data-key="post">
     <div class="top">
       <div class="cb"><svg width="12" height="10" viewBox="0 0 12 10"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <div class="ttl"><span class="jp">写真を投稿した（#モアゼ）</span><span class="ko">사진을 게시했어요 (#モアゼ)</span></div>
+      <div class="ttl"><span class="jp">ストーリー・写真・投稿などをシェアした（#モアゼ）</span><span class="ko">스토리/사진/포스트 등을 게시했어요 (#モアゼ)</span></div>
       <div class="pt">+2pt</div>
     </div>
-    <div class="detail">
-      <input type="text" id="post_url" placeholder="https:// URL / @account" inputmode="url">
-      <div class="note"><span class="jp">投稿のURL、またはアカウント名をご記入ください（公開アカウントでお願いします）。</span><span class="ko">게시물 URL 또는 계정명을 적어주세요 (공개 계정으로 부탁드려요).</span></div>
-    </div>
+  </div>
+
+  <div class="notice">
+    <span class="jp block">たくさんのご応募をいただいているため、より多くご参加くださった方を中心に選定させていただく予定です。ご理解いただきありがとうございます。ポイントが今後も積み重なっていくよう、さまざまなキャンペーンをこれからも頻繁にご用意してまいります！</span>
+    <span class="ko block">지원자가 많아 더 많이 기여해주신 분들 위주로 선정할 예정입니다. 이해해주셔서 감사드리며, 해당 포인트는 앞으로 계속 누적될 수 있도록 다양한 캠페인 자주 준비해보겠습니다!</span>
   </div>
 </section>
 
@@ -530,8 +535,8 @@ document.getElementById('survey').addEventListener('submit', async e=>{
     did_x_follow: BASE.x,
     x_id: v('x_id'),
     did_hashtag_post: BASE.post,
-    post_url: v('post_url'),
     total_points: total,
+    campaign: 'freegift_2608',
     visit_source: v('visit_source'),
     feedback: v('feedback'),
     privacy_agreed: true,
