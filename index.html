@@ -438,6 +438,10 @@ footer{text-align:center;margin-top:36px;font-family:'Montserrat',sans-serif;fon
 
 <script>
 const SUPABASE_URL = "https://agvtlghgtdpnuarovanf.supabase.co";
+/* 캠페인 코드: URL 경로(/2608shibuya) 또는 ?c= 파라미터에서 자동 인식 */
+const CAMPAIGN = (new URLSearchParams(location.search).get('c')
+  || location.pathname.split('/').filter(Boolean)[0]
+  || '2608shibuya').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,40) || '2608shibuya';
 const SUPABASE_KEY = "sb_publishable_711XSHRrNzhOH_YatmObwg_un0bMhUk";
 
 /* ── language ── */
@@ -553,7 +557,7 @@ document.getElementById('survey').addEventListener('submit', async e=>{
     x_id: v('x_id'),
     did_hashtag_post: BASE.post,
     total_points: total,
-    campaign: 'freegift_2608',
+    campaign: CAMPAIGN,
     country: 'JP',
     visit_source: v('visit_source'),
     feedback: v('feedback'),
