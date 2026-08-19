@@ -148,12 +148,12 @@ async function login(){
 }
 
 const CAMPAIGNS = {
-  freegift_2608: {label:'LINE FREE GIFT (성수재팬 시부야)', url:'https://event.moiseskin.com'}
+  '2608shibuya': {label:'LINE FREE GIFT (성수재팬 시부야)', url:'https://event.moiseskin.com/2608shibuya'}
 };
 
 function boot(){
   // 캠페인/국가 필터 옵션
-  const camps = [...new Set(DATA.map(r=>r.campaign||'freegift_2608'))];
+  const camps = [...new Set(DATA.map(r=>r.campaign||'2608shibuya'))];
   const sel = document.getElementById('f-camp');
   camps.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=(CAMPAIGNS[c]?.label||c); sel.appendChild(o); });
   const countries = [...new Set(DATA.map(r=>r.country||'JP'))];
@@ -165,7 +165,7 @@ function boot(){
 function renderCamps(){
   const g = {};
   DATA.forEach(r=>{
-    const k = r.campaign||'freegift_2608';
+    const k = r.campaign||'2608shibuya';
     (g[k] = g[k]||[]).push(r);
   });
   document.getElementById('crow').innerHTML = Object.entries(g).map(([k,rows])=>{
@@ -204,7 +204,7 @@ function filtered(){
   const c = document.getElementById('f-camp').value;
   const ct = document.getElementById('f-country').value;
   return DATA.filter(r=>{
-    if(c && (r.campaign||'freegift_2608')!==c) return false;
+    if(c && (r.campaign||'2608shibuya')!==c) return false;
     if(ct && (r.country||'JP')!==ct) return false;
     if(q){
       const hay=[r.full_name,r.furigana,r.line_display_name,r.instagram_id,r.x_id,r.qoo10_id,r.email,r.phone].join(' ').toLowerCase();
