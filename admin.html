@@ -78,6 +78,7 @@ tr.win{background:var(--yellow)}
     <button class="tab on" id="tab-entries" onclick="showTab('entries')">응모 내역</button>
     <button class="tab" id="tab-points" onclick="showTab('points')">누적 포인트 (인별)</button>
     <button class="tab" id="tab-camps" onclick="showTab('camps')">캠페인 내역</button>
+    <button class="tab" id="tab-mail" onclick="showTab('mail')">📧 메일 캠페인</button>
   </div>
 
   <div class="card" id="pane-entries">
@@ -114,13 +115,21 @@ tr.win{background:var(--yellow)}
       <thead><tr><th>이메일</th><th>LINE명</th><th>이름</th><th>응모 횟수</th><th>누적 포인트</th><th>최근 응모</th></tr></thead>
       <tbody id="prow"></tbody>
     </table></div>
+  
+  <div class="card" id="pane-mail" style="display:none">
+    <p class="small muted" style="margin-bottom:10px">발송한 메일 캠페인의 성과예요. 오픈은 이미지 차단·프리페치 때문에 대략치이고, 클릭 수는 정확해요. 구매 전환은 Qoo10 클릭 기준(실제 결제는 Qoo10 판매내역과 대조 필요)입니다.</p>
+    <div class="tblwrap"><table style="min-width:900px">
+      <thead><tr><th>캠페인</th><th>국가</th><th>발송</th><th>오픈</th><th>오픈율</th><th>SNS 전환 (IG/X/LINE)</th><th>구매 전환 (Qoo10 클릭)</th><th>발송일</th></tr></thead>
+      <tbody id="mrow"></tbody>
+    </table></div>
   </div>
+</div>
 </div>
 
 <script>
 const URL_ = "https://agvtlghgtdpnuarovanf.supabase.co";
 const KEY = "sb_publishable_711XSHRrNzhOH_YatmObwg_un0bMhUk";
-let PW = '', DATA = [], POINTS = [], WIN = new Set();
+let PW = '', DATA = [], POINTS = [], MAIL = [], WIN = new Set();
 
 async function rpc(fn, pw){
   const r = await fetch(`${URL_}/rest/v1/rpc/${fn}`, {
@@ -137,8 +146,8 @@ async function login(){
   try{
     const ok = await rpc('line_event_check', pw);
     if(ok !== true) throw new Error('wrong');
-    const [rows, pts] = await Promise.all([rpc('line_event_admin', pw), rpc('line_event_points', pw)]);
-    PW = pw; DATA = rows || []; POINTS = pts || [];
+    const [rows, pts, mail] = await Promise.all([rpc('line_event_admin', pw), rpc('line_event_points', pw), rpc('line_event_mailstats', pw).catch(()=>[])]);
+    PW = pw; DATA = rows || []; POINTS = pts || []; MAIL = mail || [];
     document.getElementById('gate').style.display='none';
     document.getElementById('app').style.display='block';
     boot();
@@ -159,7 +168,7 @@ function boot(){
   const countries = [...new Set(DATA.map(r=>r.country||'JP'))];
   const cs = document.getElementById('f-country');
   countries.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; cs.appendChild(o); });
-  kpis(); render(); renderPoints(); renderCamps();
+  kpis(); render(); renderPoints(); renderCamps(); renderMail();
 }
 
 function renderCamps(){
@@ -247,8 +256,25 @@ function renderPoints(){
     </tr>`).join('');
 }
 
+function renderMail(){
+  document.getElementById('mrow').innerHTML = (MAIL||[]).map(m=>{
+    const sns = (m.click_ig||0)+(m.click_x||0)+(m.click_line||0);
+    const rate = m.sent_count ? Math.round((m.opens||0)/m.sent_count*100)+'%' : '—';
+    return `<tr>
+      <td><b>${esc(m.label||m.campaign)}</b><div class="small muted">${esc(m.campaign)} · ${esc(m.subject||'')}</div></td>
+      <td>${esc(m.country||'—')}</td>
+      <td>${m.sent_count!=null? m.sent_count+'명':'<span class="muted">미발송</span>'}</td>
+      <td class="pt">${m.opens||0}</td>
+      <td>${rate}</td>
+      <td>${sns}건 <span class="small muted">(IG ${m.click_ig||0} · X ${m.click_x||0} · LINE ${m.click_line||0})</span></td>
+      <td class="pt">${m.click_qoo10||0}건</td>
+      <td class="small">${m.sent_at? fd(m.sent_at):'—'}</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="8" class="muted">아직 발송한 메일 캠페인이 없어요.</td></tr>';
+}
+
 function showTab(t){
-  ['entries','points','camps'].forEach(x=>{
+  ['entries','points','camps','mail'].forEach(x=>{
     document.getElementById('pane-'+x).style.display = t===x?'block':'none';
     document.getElementById('tab-'+x).classList.toggle('on', t===x);
   });
