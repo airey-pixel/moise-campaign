@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>MOISĒ — Admin Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital@1&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+:root{
+  --pink1:#FDF0F3; --pink2:#F2AFC2; --pink3:#E07F9B; --rose:#C9698A;
+  --cream:#F6F1E9; --ink:#23272A; --gray:#4D5356; --lime:#C2D870;
+  --lime-tint:#F4F8E8; --border:rgba(35,39,42,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Pretendard Variable',Pretendard,-apple-system,sans-serif;background:#fff;color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.6}
+.mono{font-family:'IBM Plex Mono',monospace}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit}
+
+/* gate */
+#gate{position:fixed;inset:0;background:#fff;display:flex;align-items:center;justify-content:center;z-index:100}
+#gate .box{text-align:center;padding:24px}
+#gate .logo{margin-bottom:14px}
+#gate .logo img{height:26px;display:inline-block}
+#gate .sub{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.26em;color:var(--gray);margin-bottom:30px}
+#gate input{border:1px solid var(--border);border-radius:4px;padding:12px 16px;font-size:15px;text-align:center;letter-spacing:.2em;outline:none;width:230px;font-family:'IBM Plex Mono',monospace}
+#gate input:focus{border-color:var(--rose);box-shadow:0 0 0 3px rgba(201,105,138,.12)}
+#gate button{display:block;margin:12px auto 0;border:0;background:var(--ink);color:#fff;font-size:13px;font-weight:700;padding:11px 34px;border-radius:4px;cursor:pointer}
+#gate .msg{font-size:11.5px;color:var(--pink3);margin-top:10px;min-height:16px}
+
+/* hub */
+#hub{display:none;max-width:1060px;margin:0 auto;padding:44px 24px 80px}
+.hd{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.hd .logo img{height:24px;display:block}
+.hd .right{display:flex;align-items:center;gap:14px}
+.hd .co{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.2em;color:var(--gray)}
+.tagline{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--rose);margin-bottom:36px}
+.btn{border:1px solid var(--border);background:#fff;border-radius:4px;padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer;color:var(--ink);letter-spacing:.04em}
+.btn:hover{border-color:var(--ink)}
+.btn.dark{background:var(--ink);color:#fff;border-color:var(--ink)}
+.btn.rose{background:var(--rose);color:#fff;border-color:var(--rose)}
+.btn.sm{padding:3px 8px;font-size:10px}
+
+.section{margin-bottom:34px}
+.sec-h{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sec-h .t{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.24em;color:var(--rose);white-space:nowrap}
+.sec-h .line{flex:1;height:1px;background:var(--border)}
+.sec-h .tools{display:none;gap:6px}
+body.edit .sec-h .tools{display:flex}
+
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.grid{grid-template-columns:1fr}}
+.card{position:relative;display:block;border:1px solid var(--border);border-radius:6px;padding:16px 18px 15px;background:#fff;transition:border-color .15s,transform .15s}
+.card:hover{border-color:var(--ink);transform:translateY(-1px)}
+.card.pink{background:var(--pink1);border-color:rgba(201,105,138,.25)}
+.card.tint{background:var(--lime-tint);border-color:rgba(194,216,112,.55)}
+.card .host{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--gray);text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:18px}
+.card .name{font-size:15px;font-weight:700;letter-spacing:-.01em;margin-bottom:2px}
+.card .desc{font-size:12.5px;color:var(--gray);line-height:1.5;word-break:keep-all}
+.copybtn{border:1px solid var(--border);background:#fff;border-radius:20px;padding:2px 9px;font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.16em;cursor:pointer;color:var(--ink);text-transform:uppercase;line-height:1.5}
+.copybtn:hover{border-color:var(--ink)}
+.copybtn.ok{background:var(--lime);border-color:var(--lime)}
+.card .edit-tools{display:none;position:absolute;right:10px;bottom:10px;gap:4px}
+body.edit .card .edit-tools{display:flex}
+body.edit .card{padding-bottom:40px}
+.etb{border:1px solid var(--border);background:#fff;border-radius:3px;width:24px;height:22px;font-size:11px;cursor:pointer;color:var(--ink);line-height:1}
+.etb:hover{border-color:var(--ink)}
+.etb.del:hover{border-color:var(--pink3);color:var(--pink3)}
+.addcard{display:none;border:1px dashed var(--border);border-radius:6px;padding:16px;text-align:center;font-size:12px;color:var(--gray);cursor:pointer;min-height:96px;align-items:center;justify-content:center}
+.addcard:hover{border-color:var(--ink);color:var(--ink)}
+body.edit .addcard{display:flex}
+
+.ft{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:40px;padding-top:16px;border-top:1px solid var(--border);font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--gray)}
+.empty{font-size:13px;color:var(--gray);padding:30px 0;text-align:center}
+
+/* modal */
+#modal{display:none;position:fixed;inset:0;background:rgba(35,39,42,.35);z-index:200;align-items:center;justify-content:center;padding:20px}
+#modal.on{display:flex}
+#modal .panel{background:#fff;border-radius:8px;width:100%;max-width:460px;padding:24px 24px 20px;box-shadow:0 20px 60px rgba(0,0,0,.18)}
+#modal h3{font-size:15px;font-weight:700;margin-bottom:16px}
+.f{margin-bottom:12px}
+.f label{display:block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--gray);text-transform:uppercase;margin-bottom:5px}
+.f input,.f select{width:100%;border:1px solid var(--border);border-radius:4px;padding:9px 11px;font-size:13px;font-family:inherit;outline:none;background:#fff}
+.f input:focus,.f select:focus{border-color:var(--rose);box-shadow:0 0 0 3px rgba(201,105,138,.12)}
+.f.row{display:flex;gap:10px}
+.f.row>div{flex:1}
+.f.chk{display:flex;align-items:center;gap:8px;font-size:12.5px}
+.f.chk input{width:auto}
+.mactions{display:flex;justify-content:space-between;align-items:center;margin-top:18px}
+.mactions .r{display:flex;gap:8px}
+.mmsg{font-size:11.5px;color:var(--pink3);min-height:16px;margin-top:6px}
+#toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:12px;padding:9px 16px;border-radius:4px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:300}
+#toast.on{opacity:1}
+</style>
+</head>
+<body>
+
+<!-- ───────── GATE ───────── -->
+<div id="gate">
+  <form class="box" id="gateform" autocomplete="off">
+    <div class="logo"><img id="logo1" alt="MOISĒ"></div>
+    <div class="sub">ADMIN HUB · PRIVATE</div>
+    <input id="pass" type="password" placeholder="PASSCODE" autofocus>
+    <button type="submit">입장</button>
+    <div class="msg" id="gatemsg"></div>
+  </form>
+</div>
+
+<!-- ───────── HUB ───────── -->
+<div id="hub">
+  <div class="hd">
+    <div class="logo"><img id="logo2" alt="MOISĒ"></div>
+    <div class="right">
+      <span class="co">MOODLABS CO., LTD. · INTERNAL</span>
+      <button class="btn" id="editbtn">링크 편집</button>
+    </div>
+  </div>
+  <div class="tagline">Be Your Own Favorite.</div>
+
+  <div id="sections"></div>
+
+  <div class="ft">
+    <span>ADMIN HUB · 링크는 '링크 편집'에서 바로 추가/수정 — 데이터는 SUPABASE에 저장됨</span>
+    <span id="ver">v2 · <span id="cnt"></span> LINKS</span>
+  </div>
+</div>
+
+<!-- ───────── MODAL ───────── -->
+<div id="modal">
+  <form class="panel" id="mform" autocomplete="off">
+    <h3 id="mtitle">링크 추가</h3>
+    <div class="f row">
+      <div><label>섹션</label><select id="m_section"></select></div>
+      <div id="m_newsec_wrap" style="display:none"><label>새 섹션 이름</label><input id="m_newsec" placeholder="예: 🧪 테스트"></div>
+    </div>
+    <div class="f"><label>이름</label><input id="m_name" required placeholder="표시 이름"></div>
+    <div class="f"><label>설명</label><input id="m_desc" placeholder="한 줄 설명"></div>
+    <div class="f"><label>URL</label><input id="m_url" required placeholder="https://… / mailto:…"></div>
+    <div class="f row">
+      <div><label>스타일</label>
+        <select id="m_style"><option value="">기본</option><option value="pink">핑크 (강조)</option><option value="tint">연두 (운영)</option></select>
+      </div>
+      <div class="f chk" style="margin-top:22px"><input type="checkbox" id="m_copy"><label for="m_copy" style="margin:0;text-transform:none;font-family:inherit;font-size:12.5px;letter-spacing:0;color:var(--ink)">COPY 버튼 표시</label></div>
+    </div>
+    <div class="mmsg" id="mmsg"></div>
+    <div class="mactions">
+      <button type="button" class="btn" id="mcancel">취소</button>
+      <div class="r"><button type="submit" class="btn dark" id="msave">저장</button></div>
+    </div>
+  </form>
+</div>
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  CONFIG — Supabase (maeg 프로젝트). 링크 데이터는 public.hub_links 테이블.
+//  패스코드는 기존 /admin 과 동일 (line_event_check RPC 로 검증)
+// ═══════════════════════════════════════════════════════════
+const SB_URL = "https://agvtlghgtdpnuarovanf.supabase.co";
+const SB_KEY = "sb_publishable_711XSHRrNzhOH_YatmObwg_un0bMhUk";
+const LOGO   = SB_URL + "/storage/v1/object/public/preview/mail/jp-ginza2609/logo_t_1789222120361.png";
+const SS_KEY = "moise_hub_pw";
+
+document.getElementById('logo1').src = LOGO;
+document.getElementById('logo2').src = LOGO;
+
+let PW = sessionStorage.getItem(SS_KEY) || "";
+let ROWS = [];
+let EDIT = false;
+
+async function rpc(fn, args){
+  const r = await fetch(SB_URL + "/rest/v1/rpc/" + fn, {
+    method:"POST",
+    headers:{"Content-Type":"application/json","apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY},
+    body: JSON.stringify(args)
+  });
+  if(!r.ok){ throw new Error((await r.text()).slice(0,200)); }
+  const t = await r.text();
+  return t ? JSON.parse(t) : null;
+}
+
+// ── gate ──
+document.getElementById('gateform').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const pw = document.getElementById('pass').value.trim();
+  const msg = document.getElementById('gatemsg');
+  msg.textContent = "확인 중…";
+  try{
+    const ok = await rpc("line_event_check", {pw});
+    if(ok !== true){ msg.textContent = "패스코드가 올바르지 않습니다"; return; }
+    PW = pw; sessionStorage.setItem(SS_KEY, pw);
+    await enter();
+  }catch(err){ msg.textContent = "연결 오류: " + err.message; }
+});
+
+async function enter(){
+  await load();
+  document.getElementById('gate').style.display = "none";
+  document.getElementById('hub').style.display = "block";
+}
+
+async function load(){
+  ROWS = await rpc("hub_links_list", {pw: PW}) || [];
+  render();
+}
+
+// ── render ──
+function hostOf(u){
+  try{
+    if(u.startsWith("mailto:")) return "mail";
+    if(u.startsWith("tel:")) return "tel";
+    return new URL(u).host.replace(/^www\./,"");
+  }catch(e){ return ""; }
+}
+function esc(s){ return String(s??"").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+function groups(){
+  const g = new Map();
+  for(const r of ROWS){
+    if(!g.has(r.section)) g.set(r.section, {section:r.section, order:r.section_order, items:[]});
+    g.get(r.section).items.push(r);
+  }
+  return [...g.values()].sort((a,b)=>a.order-b.order || a.section.localeCompare(b.section));
+}
+
+function render(){
+  const root = document.getElementById('sections');
+  const gs = groups();
+  document.getElementById('cnt').textContent = ROWS.length;
+  if(!gs.length){ root.innerHTML = '<div class="empty">링크가 없습니다. 우측 상단 "링크 편집"에서 추가하세요.</div>'; }
+  root.innerHTML = gs.map((g,gi)=>`
+    <div class="section" data-sec="${esc(g.section)}">
+      <div class="sec-h">
+        <span class="t">${esc(g.section)}</span><span class="line"></span>
+        <span class="tools">
+          <button class="btn sm" onclick="moveSec(${gi},-1)" ${gi===0?'disabled':''}>▲</button>
+          <button class="btn sm" onclick="moveSec(${gi},1)" ${gi===gs.length-1?'disabled':''}>▼</button>
+          <button class="btn sm" onclick="renameSec(${gi})">이름변경</button>
+        </span>
+      </div>
+      <div class="grid">
+        ${g.items.map((r,i)=>card(r,i,g.items.length)).join("")}
+        <div class="addcard" onclick="openModal(null, ${JSON.stringify(g.section).replace(/"/g,'&quot;')})">＋ 링크 추가</div>
+      </div>
+    </div>`).join("") + (EDIT ? `<div class="section"><div class="addcard" style="display:flex" onclick="openModal(null, '__new__')">＋ 새 섹션에 링크 추가</div></div>` : "");
+}
+
+function card(r, i, n){
+  const cls = "card" + (r.style ? " "+r.style : "");
+  const copy = r.copy ? `<button class="copybtn" onclick="copyUrl(event, this, ${JSON.stringify(r.url).replace(/"/g,'&quot;')})">copy</button>` : "";
+  const tools = `<span class="edit-tools">
+      <button class="etb" onclick="moveItem(event,'${r.id}',-1)" ${i===0?'disabled':''} title="앞으로">◀</button>
+      <button class="etb" onclick="moveItem(event,'${r.id}',1)" ${i===n-1?'disabled':''} title="뒤로">▶</button>
+      <button class="etb" onclick="editItem(event,'${r.id}')" title="수정">✎</button>
+      <button class="etb del" onclick="delItem(event,'${r.id}')" title="삭제">✕</button>
+    </span>`;
+  return `<a class="${cls}" href="${esc(r.url)}" target="_blank" rel="noopener">
+    <div class="host"><span>${esc(hostOf(r.url))}</span>${copy}</div>
+    <div class="name">${esc(r.name)}</div>
+    <div class="desc">${esc(r.description)}</div>
+    ${tools}
+  </a>`;
+}
+
+function copyUrl(e, btn, url){
+  e.preventDefault(); e.stopPropagation();
+  navigator.clipboard.writeText(url.replace(/^mailto:/,"")).then(()=>{
+    btn.classList.add("ok"); btn.textContent="copied";
+    setTimeout(()=>{btn.classList.remove("ok"); btn.textContent="copy";}, 1400);
+  });
+}
+
+function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('on'); setTimeout(()=>t.classList.remove('on'),1600); }
+
+// ── edit mode ──
+document.getElementById('editbtn').addEventListener('click', ()=>{
+  EDIT = !EDIT;
+  document.body.classList.toggle('edit', EDIT);
+  const b = document.getElementById('editbtn');
+  b.textContent = EDIT ? "편집 완료" : "링크 편집";
+  b.classList.toggle('rose', EDIT);
+  render();
+});
+
+// ── modal ──
+let M_ID = null;
+function fillSections(sel, current){
+  const secs = groups().map(g=>g.section);
+  sel.innerHTML = secs.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join("") + `<option value="__new__">＋ 새 섹션…</option>`;
+  sel.value = secs.includes(current) ? current : "__new__";
+  document.getElementById('m_newsec_wrap').style.display = sel.value==="__new__" ? "block" : "none";
+}
+document.getElementById('m_section').addEventListener('change', e=>{
+  document.getElementById('m_newsec_wrap').style.display = e.target.value==="__new__" ? "block" : "none";
+});
+function openModal(row, section){
+  M_ID = row ? row.id : null;
+  document.getElementById('mtitle').textContent = row ? "링크 수정" : "링크 추가";
+  fillSections(document.getElementById('m_section'), row ? row.section : section);
+  document.getElementById('m_newsec').value = "";
+  document.getElementById('m_name').value = row ? row.name : "";
+  document.getElementById('m_desc').value = row ? row.description : "";
+  document.getElementById('m_url').value  = row ? row.url : "";
+  document.getElementById('m_style').value = row ? (row.style||"") : "";
+  document.getElementById('m_copy').checked = row ? !!row.copy : false;
+  document.getElementById('mmsg').textContent = "";
+  document.getElementById('modal').classList.add('on');
+  setTimeout(()=>document.getElementById('m_name').focus(), 50);
+}
+function closeModal(){ document.getElementById('modal').classList.remove('on'); }
+document.getElementById('mcancel').addEventListener('click', closeModal);
+document.getElementById('modal').addEventListener('click', e=>{ if(e.target.id==='modal') closeModal(); });
+
+document.getElementById('mform').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const msg = document.getElementById('mmsg');
+  let section = document.getElementById('m_section').value;
+  let section_order = null;
+  if(section === "__new__"){
+    section = document.getElementById('m_newsec').value.trim();
+    if(!section){ msg.textContent = "새 섹션 이름을 입력하세요"; return; }
+    const gs = groups(); const ex = gs.find(g=>g.section===section);
+    section_order = ex ? ex.order : (gs.length ? Math.max(...gs.map(g=>g.order))+1 : 0);
+  }else{
+    section_order = (groups().find(g=>g.section===section)||{}).order ?? 0;
+  }
+  const payload = {
+    id: M_ID, section, section_order,
+    name: document.getElementById('m_name').value.trim(),
+    description: document.getElementById('m_desc').value.trim(),
+    url: document.getElementById('m_url').value.trim(),
+    style: document.getElementById('m_style').value,
+    copy: document.getElementById('m_copy').checked
+  };
+  if(!payload.name || !payload.url){ msg.textContent = "이름과 URL은 필수입니다"; return; }
+  msg.textContent = "저장 중…";
+  try{
+    await rpc("hub_links_upsert", {pw: PW, payload});
+    closeModal(); await load(); toast(M_ID ? "수정됨" : "추가됨");
+  }catch(err){ msg.textContent = "저장 실패: " + err.message; }
+});
+
+function editItem(e, id){ e.preventDefault(); e.stopPropagation(); openModal(ROWS.find(r=>r.id===id)); }
+async function delItem(e, id){
+  e.preventDefault(); e.stopPropagation();
+  const r = ROWS.find(x=>x.id===id);
+  if(!confirm(`"${r.name}" 링크를 삭제할까요?`)) return;
+  try{ await rpc("hub_links_delete", {pw: PW, row_id: id}); await load(); toast("삭제됨"); }
+  catch(err){ alert("삭제 실패: " + err.message); }
+}
+async function moveItem(e, id, dir){
+  e.preventDefault(); e.stopPropagation();
+  const r = ROWS.find(x=>x.id===id);
+  const g = groups().find(g=>g.section===r.section);
+  const i = g.items.findIndex(x=>x.id===id), j = i+dir;
+  if(j<0 || j>=g.items.length) return;
+  [g.items[i], g.items[j]] = [g.items[j], g.items[i]];
+  const items = g.items.map((x,k)=>({id:x.id, sort_order:k}));
+  await saveOrder(items);
+}
+async function moveSec(gi, dir){
+  const gs = groups(); const j = gi+dir;
+  if(j<0 || j>=gs.length) return;
+  [gs[gi], gs[j]] = [gs[j], gs[gi]];
+  const items = gs.flatMap((g,k)=>g.items.map(x=>({id:x.id, section_order:k})));
+  await saveOrder(items);
+}
+async function renameSec(gi){
+  const g = groups()[gi];
+  const name = prompt("섹션 이름", g.section);
+  if(!name || name.trim()===g.section) return;
+  const items = g.items.map(x=>({id:x.id, section:name.trim()}));
+  await saveOrder(items);
+}
+async function saveOrder(items){
+  try{ await rpc("hub_links_reorder", {pw: PW, items}); await load(); }
+  catch(err){ alert("저장 실패: " + err.message); }
+}
+
+// ── auto login if session has pw ──
+(async ()=>{
+  if(!PW) return;
+  try{ const ok = await rpc("line_event_check", {pw: PW}); if(ok===true) await enter(); else sessionStorage.removeItem(SS_KEY); }
+  catch(e){}
+})();
+</script>
+</body>
+</html>
